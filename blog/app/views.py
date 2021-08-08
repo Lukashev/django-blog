@@ -4,6 +4,8 @@ from django.contrib import messages
 from .models import Category, Article
 from .forms import *
 
+#  Category.objects.annotate(num_products=Count('products'))
+
 def index(request, slug=None):
     categories = Category.objects.all()
     context = {
@@ -16,14 +18,6 @@ def index(request, slug=None):
         articles = Article.objects.filter(category=category)
     context = {**context, 'articles': articles}
     return render(request, 'index.html', context)
-
-
-def login(request):
-    return render(request, 'login.html')
-
-
-def register(request):
-    return render(request, 'register.html')
 
 
 def add_article(request):
@@ -40,7 +34,22 @@ def article_details(request, article_id=None, slug=None):
     return render(request, 'article_details.html', context)
 
 
-def register(request):
+def user_login(request):
+    if request.method == 'POST':
+        form = UserLoginForm(data=request.POST)
+        if form.is_valid():
+            messages.success(request, 'Вы успешно выполнили вход в систему')
+            user = form.get_user()
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.error(request, 'Вы ввели некорректные данные')
+    else:
+        form = UserLoginForm()
+    return render(request, 'login.html', {'form': form})
+
+
+def user_register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
@@ -52,6 +61,7 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'register.html',{'form': form})
+
 
 def user_logout(request):
     logout(request)
