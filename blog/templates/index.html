@@ -17,8 +17,10 @@
                     <p class="card-subtitle mb-2 text-muted mt-3 ml-3">Категория: {{ article.category }}</p>
                 </div>
                 <hr>
+                {% autoescape off %}
                 <p class="card-text mt-3">{{ article.content|truncatechars_html:150 }}</p>
-                <a href="#" class="btn btn-primary">Читать дальше</a>
+                {% endautoescape %}
+                <a href="{{ article.get_absolute_url }}" class="btn btn-primary">Читать дальше</a>
             </div>
         </div>
         {% empty %}
@@ -26,18 +28,7 @@
         {% endfor %}
     </div>
     <div class="col-lg-3">
-        <ul class="list-group">
-             <li class="list-group-item">
-                <a href="/">Все категории</a>
-            </li>
-            {% for category in categories %}
-            <li class="list-group-item">
-                <a href="{{ category.get_absolute_url }}">{{ category }}</a>
-            </li>
-            {% empty %}
-            <li>Список категорий пуст</li>
-            {% endfor %}
-        </ul>
+       {% include './partials/sidebar.html' with categories=categories %}
     </div>
 </div>
 {% endblock %}
